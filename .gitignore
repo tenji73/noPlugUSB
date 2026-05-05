@@ -1,4 +1,5 @@
 fe_sync.sh
+rsync.sh
 
 # Node
 node_modules/
