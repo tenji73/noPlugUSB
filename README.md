@@ -2,7 +2,6 @@
 
 **The Wireless Virtual Drive Manager for "Dumb" Hardware**
 
-
 NoPlugUSB is an open-source hardware and software solution that eliminates the "USB Shuffle." By transforming a Raspberry Pi Zero 2 W into a smart, Wi-Fi-enabled virtual flash drive, it allows users to wirelessly manage, upload, and swap files directly to 3D printers, CNC machines, and Smart TVs without ever touching a physical USB stick.
 
 ---
