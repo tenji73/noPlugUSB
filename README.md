@@ -2,7 +2,8 @@
 
 **The Wireless Virtual Drive Manager for "Dumb" Hardware**
 
-NoPlugUSB is an open-source hardware and software solution that eliminates the "USB Shuffle." By transforming a Raspberry Pi Zero W into a smart, Wi-Fi-enabled virtual flash drive, it allows users to wirelessly manage, upload, and swap files directly to 3D printers, CNC machines, and Smart TVs without ever touching a physical USB stick.
+
+NoPlugUSB is an open-source hardware and software solution that eliminates the "USB Shuffle." By transforming a Raspberry Pi Zero 2 W into a smart, Wi-Fi-enabled virtual flash drive, it allows users to wirelessly manage, upload, and swap files directly to 3D printers, CNC machines, and Smart TVs without ever touching a physical USB stick.
 
 ---
 
@@ -42,23 +43,55 @@ NoPlugUSB combines low-level Linux hardware emulation with a modern web stack:
 
 ---
 
-## 🛠️ Tech Stack
-* **Frontend:** Angular 21, Tailwind CSS
-* **Backend:** Node.js, Express, Multer
-* **Hardware:** Raspberry Pi Zero W (or similar Linux SBC)
+## 🛒 Hardware Requirements
 
-## Logs and restart (Raspberry Pi)
+To build the NoPlugUSB appliance, you will need:
+1. **A Raspberry Pi Zero 2 W** (Pi 4 and Pi 5 also work via their USB-C ports).
+2. **A High-Quality 5V/2.5A Wall Charger** to power the Pi independently.
+3. **A Modified Micro-USB Data Cable**
 
-Backend logs go to **journald** when the app runs under systemd (`noplugusb`):
+⚠️ **CRITICAL POWER WARNING:** You cannot power the Pi from the 3D printer's USB port. The printer cannot supply enough amperage, which causes the Pi's Wi-Fi to constantly disconnect due to hardware brownouts.
+* **The Fix:** Take a standard micro-USB data cable, carefully strip the outer jacket, and **cut the RED (5V) wire**. Leave the Black, Green, and White wires completely intact.
+* Plug this modified data-only cable into the Pi's inner data USB port and the printer. Plug your wall charger into the Pi's outer "PWR" port.
+
+---
+
+## 🚀 Quick Start Installation
+
+NoPlugUSB comes with a fully automated, one-click installation script that configures the Linux kernel, sets up the Wi-Fi watchdog, and installs the web interface as a background service.
+
+**1. Prepare the SD Card**
+Use the official [Raspberry Pi Imager](https://www.raspberrypi.com/software/) to flash **Raspberry Pi OS Lite (64-bit or 32-bit)** to an SD card. Use the "OS Customization" settings in the Imager to input your Wi-Fi credentials and enable SSH.
+
+**2. Run the Installer**
+Boot the Pi, SSH into it, and run the following commands:
 
 ```bash
-# Last 200 lines, then follow new log lines
-sudo journalctl -u noplugusb -n 200 --no-pager
-sudo journalctl -u noplugusb -f
+git clone [https://github.com/tenji73/noPlugUSB.git](https://github.com/tenji73/noPlugUSB.git)
+cd noPlugUSB
+sudo chmod +x install.sh
+sudo ./install.sh
 ```
+**3. Reboot and Connect**
+ *  Once the script finishes, run sudo reboot.
+  * After the Pi turns back on, open a web browser on any device connected to your Wi-Fi and navigate to:http://<your-raspberry-pi-ip>
 
-After deploying code:
+You will be greeted by the NoPlugUSB dashboard and can begin creating your first virtual drive!
 
+## 🛠️ Tech Stack
+* Frontend: Angular 21, Tailwind CSS
+* Backend: Node.js, Express, Multer
+* Hardware: Raspberry Pi Zero 2 W (Linux `dwc2` and `g_mass_storage)
+
+
+## 📋 Logs and Troubleshooting
+The backend runs as a `systemd service named `noplugusb`. Logs are piped directly to `journald`.
+
+To view the last 200 lines and follow new log lines:
 ```bash
+sudo journalctl -u noplugusb -n 200 -f
+```
+To restart the application manually:
+```
 sudo systemctl restart noplugusb
 ```
