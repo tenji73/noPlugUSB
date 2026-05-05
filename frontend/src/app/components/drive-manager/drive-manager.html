@@ -1,0 +1,118 @@
+@if (catalogLoading()) {
+	<div
+		class="flex flex-1 flex-col items-center justify-center px-4 py-12 text-center sm:min-h-[min(480px,calc(100vh-11rem))] sm:py-16">
+		<div
+			class="inline-flex items-center gap-3 rounded-2xl border border-app-border-soft/80 bg-app-surface/70 px-6 py-5 shadow-lg backdrop-blur-sm">
+			<span
+				class="inline-block h-9 w-9 shrink-0 animate-spin rounded-full border-2 border-app-border-soft border-t-blue-500"
+				role="status"
+				aria-hidden="true"></span>
+			<div class="text-left">
+				<p class="text-sm font-semibold text-app-fg">Loading virtual devices…</p>
+				<p class="mt-0.5 text-xs text-app-muted">Fetching your drives from the device.</p>
+			</div>
+		</div>
+		<div class="mt-10 grid w-full max-w-5xl grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+			@for (_ of [1, 2, 3]; track _) {
+				<div
+					class="h-64 animate-pulse rounded-2xl border border-app-border-soft/50 bg-app-raised/40 p-5 shadow-inner">
+					<div class="flex gap-4">
+						<div class="h-14 w-14 shrink-0 rounded-xl bg-app-surface/80"></div>
+						<div class="min-w-0 flex-1 space-y-3 pt-1">
+							<div class="h-5 w-3/5 rounded bg-app-surface/70"></div>
+							<div class="h-4 w-full rounded bg-app-raised/80"></div>
+							<div class="flex gap-2 pt-2">
+								<div class="h-6 w-16 rounded-md bg-app-surface/60"></div>
+								<div class="h-6 w-28 rounded-md bg-app-surface/60"></div>
+							</div>
+						</div>
+					</div>
+					<div class="mt-8 space-y-2">
+						<div class="h-10 w-full rounded-xl bg-app-surface/50"></div>
+						<div class="h-10 w-full rounded-xl bg-app-surface/50"></div>
+						<div class="h-10 w-full rounded-xl bg-app-surface/50"></div>
+					</div>
+				</div>
+			}
+		</div>
+	</div>
+} @else if (drives().length === 0) {
+	<div
+		class="flex flex-1 flex-col items-center justify-center px-4 py-16 text-center sm:min-h-[min(560px,calc(100vh-11rem))] sm:py-20">
+		<div class="relative w-full max-w-xl">
+			<div
+				class="pointer-events-none absolute left-1/2 top-1/2 h-[28rem] w-[28rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-tr from-blue-600/25 via-violet-600/15 to-transparent blur-3xl"
+				aria-hidden="true"></div>
+			<div
+				class="relative overflow-hidden rounded-[1.75rem] border border-app-border-soft/70 bg-app-surface/60 px-8 py-12 shadow-[0_24px_80px_-12px_rgba(0,0,0,0.65)] backdrop-blur-md sm:px-12 sm:py-14">
+				<div
+					class="pointer-events-none absolute -right-12 -top-12 h-40 w-40 rounded-full bg-blue-500/10 blur-2xl"
+					aria-hidden="true"></div>
+				<div
+					class="pointer-events-none absolute -bottom-8 -left-8 h-32 w-32 rounded-full bg-violet-500/10 blur-2xl"
+					aria-hidden="true"></div>
+
+				<div class="relative">
+					<div
+						class="mx-auto mb-6 max-w-md rounded-xl border border-amber-500/35 bg-amber-500/10 px-4 py-3 text-left text-sm text-amber-900 dim:text-amber-100 shadow-sm flex gap-3 items-start">
+						<i
+							class="fa-solid fa-circle-info mt-0.5 shrink-0 text-amber-800 dim:text-amber-200/90"
+							aria-hidden="true"></i>
+						<p class="leading-relaxed">
+							<span class="font-medium text-amber-950 dim:text-amber-50/95">No virtual devices yet.</span>
+							Create a drive to get a private folder—then add files and connect it to a host like a USB stick.
+						</p>
+					</div>
+					<div
+						class="mx-auto mb-8 flex h-[4.5rem] w-[4.5rem] items-center justify-center rounded-2xl bg-gradient-to-br from-app-raised/90 to-app-page ring-1 ring-inset ring-white/10 shadow-lg">
+						<i class="fa-solid fa-hard-drive text-[2.35rem] text-blue-400" aria-hidden="true"></i>
+					</div>
+					<p
+						class="text-[11px] font-semibold uppercase tracking-[0.2em] text-blue-400/90">
+						No devices yet
+					</p>
+					<h2
+						class="mt-3 text-balance bg-gradient-to-br from-app-fg via-app-subtle to-app-muted bg-clip-text text-3xl font-bold tracking-tight text-transparent sm:text-4xl sm:leading-tight">
+						Add your first virtual USB drive
+					</h2>
+					<p class="mx-auto mt-5 max-w-md text-pretty text-base leading-relaxed text-app-muted sm:text-[1.05rem]">
+						Spin up a drive in seconds, drop files from your browser, then plug it into TVs, 3D printers, or
+						any host—no physical stick required.
+					</p>
+					<button
+						type="button"
+						(click)="openCreateDialog()"
+						[disabled]="usbBusy() || busyDriveId() !== null"
+						class="btn mt-10 inline-flex w-full max-w-sm items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-blue-600 to-blue-500 px-10 py-4 text-base font-semibold text-white shadow-xl shadow-blue-950/50 transition hover:from-blue-500 hover:to-blue-400 disabled:pointer-events-none disabled:opacity-40 sm:w-auto sm:min-w-[18rem] sm:py-[1.125rem] sm:text-lg">
+						<i class="fa-solid fa-circle-plus text-xl opacity-95" aria-hidden="true"></i>
+						<span>Add virtual device</span>
+					</button>
+					<p class="mt-8 text-xs leading-relaxed text-app-muted">
+						Tip: you can also use
+						<span class="font-medium text-app-fg">Create New Drive</span>
+						in the header.
+					</p>
+				</div>
+			</div>
+		</div>
+	</div>
+} @else {
+	<div class="grid grid-cols-1 items-stretch sm:grid-cols-2 lg:grid-cols-3 gap-5">
+		@for (drive of drives(); track drive.id) {
+			<app-drive-card
+				class="min-h-0"
+				variant="dashboard"
+				[drive]="drive"
+				[isUsbActive]="isDriveActive(drive)"
+				[cardBusy]="cardBusy(drive)"
+				[interlocked]="cardInterlocked(drive)"
+				[busyLabel]="busyLabel()"
+				(connect)="onConnect(drive)"
+				(disconnect)="requestDisconnect()"
+				(edit)="openEditDrive(drive)"
+				(delete)="requestDelete(drive)"
+				(manageFiles)="manageFiles(drive)"
+				(backup)="backupDrive(drive)" />
+		}
+	</div>
+}

@@ -1,0 +1,84 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import 'tailwindcss';
+@import '@fortawesome/fontawesome-free/css/all.min.css';
+
+/* Non-light themes (dark + gray): use with e.g. `text-blue-800 dim:text-blue-200` on pastel buttons */
+@custom-variant dim (&:where([data-theme='dark'] *, [data-theme='gray'] *));
+
+/*
+ * Themes: add a new `[data-theme="…"] { … }` block + an entry in `theme.service.ts` `THEME_OPTIONS`.
+ * Semantic tokens → Tailwind: bg-app-page, text-app-fg, border-app-border, …
+ */
+@theme inline {
+	--color-app-page: var(--app-page);
+	--color-app-surface: var(--app-surface);
+	--color-app-raised: var(--app-raised);
+	--color-app-border: var(--app-border);
+	--color-app-border-soft: var(--app-border-soft);
+	--color-app-fg: var(--app-fg);
+	--color-app-muted: var(--app-muted);
+	--color-app-subtle: var(--app-subtle);
+}
+
+/* Default / dark */
+:root,
+[data-theme='dark'] {
+	--app-page: oklch(0.166 0.032 253.676);
+	--app-surface: oklch(0.219 0.041 253.977);
+	--app-raised: oklch(0.276 0.029 250.91);
+	--app-border: oklch(0.34 0.02 260);
+	--app-border-soft: oklch(0.3 0.02 260);
+	--app-fg: oklch(0.898 0.011 274.882);
+	--app-muted: oklch(0.72 0.02 260);
+	--app-subtle: oklch(0.62 0.02 260);
+}
+
+[data-theme='light'] {
+	--app-page: oklch(0.875 0.009 225.095);
+	--app-surface: oklch(0.91 0.009 197.005);
+	--app-raised: oklch(0.901 0.013 255.51);
+	--app-border: oklch(0.751 0.029 249.93);
+	--app-border-soft: oklch(0.92 0.015 260);
+	--app-fg: oklch(0.317 0.025 265.549);
+	--app-muted: oklch(0.48 0.03 260);
+	--app-subtle: oklch(0.52 0.025 260);
+}
+
+[data-theme='gray'] {
+	--app-page: oklch(0.35 0.012 252.971);
+	--app-surface: oklch(0.3 0.012 260);
+	--app-raised: oklch(0.36 0.012 260);
+	--app-border: oklch(0.44 0.015 260);
+	--app-border-soft: oklch(0.4 0.012 260);
+	--app-fg: oklch(0.801 0.013 266.679);
+	--app-muted: oklch(0.66 0.02 260);
+	--app-subtle: oklch(0.56 0.02 260);
+}
+
+/* Search highlight — used by `HighlightPipe` on file / folder labels */
+.highlightSearch {
+	border-radius: 0.125rem;
+	padding: 0 0.125rem;
+	box-decoration-break: clone;
+	-webkit-box-decoration-break: clone;
+	background: color-mix(in oklch, oklch(0.78 0.14 88) 45%, transparent);
+	color: inherit;
+}
+[data-theme='light'] .highlightSearch {
+	background: color-mix(in oklch, oklch(0.72 0.12 95) 40%, transparent);
+}
+
+@layer components {
+    .btn {
+        /* Basics that every button in your shop must have */
+        @apply inline-flex items-center justify-center gap-2;
+        @apply px-6 py-2.5 rounded-lg font-bold text-sm tracking-wide;
+        @apply transition-all duration-200 active:scale-95 disabled:opacity-50;
+        @apply cursor-pointer;
+    }
+
+    .btn-xs {
+        @apply px-4 py-1 font-black text-xs;
+    }
+}

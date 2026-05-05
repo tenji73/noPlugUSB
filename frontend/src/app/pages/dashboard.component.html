@@ -1,0 +1,11 @@
+<div class="flex min-h-0 flex-1 flex-col bg-app-page text-app-fg font-sans">
+	<div class="mx-auto flex min-h-0 w-full max-w-6xl flex-1 flex-col px-4 py-6 sm:px-6 sm:py-8">
+		<section class="flex min-h-0 min-w-0 flex-1 flex-col">
+			<app-drive-manager
+				[drives]="drives()"
+				[systemState]="systemState()"
+				[catalogLoading]="catalogLoading()"
+				(stateUpdated)="applyState($event)" />
+		</section>
+	</div>
+</div>

@@ -1,0 +1,5 @@
+{
+	"watch": ["server.js", "src"],
+	"ext": "js,cjs,mjs",
+	"ignore": ["drives.json", "node_modules"]
+}

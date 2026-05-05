@@ -1,0 +1,198 @@
+<div class="file-tree-children">
+	@for (node of nodes(); track trackNode($index, node)) {
+		@if (node.kind === 'folder') {
+			<div class="group/folder">
+				<div
+					class="folder-row grid grid-cols-1 gap-2 border-b border-app-border/50 py-3 pl-3 pr-4 transition-colors hover:bg-app-raised/45 sm:grid-cols-[minmax(0,1fr)_4.5rem_7rem_11rem_auto] sm:items-center sm:gap-4 rounded-lg"
+					[ngClass]="actionsDisabled() ? '' : 'cursor-grab active:cursor-grabbing'"
+					[class.bg-blue-500/20]="dropTargetPathKey() === node.pathKey"
+					[class.ring-2]="dropTargetPathKey() === node.pathKey"
+					[class.ring-blue-500]="dropTargetPathKey() === node.pathKey"
+					[style.padding-left.rem]="depth() * 1.1 + 0.75"
+					[draggable]="!actionsDisabled()"
+					(dragstart)="
+						folderDragStart.emit({ event: $event, folder: { pathKey: node.pathKey, label: node.label } })
+					"
+					(dragend)="folderDragEnd.emit($event)"
+					(dragover)="
+						folderDragOver.emit({ event: $event, folder: { pathKey: node.pathKey, label: node.label } })
+					"
+					(dragleave)="
+						folderDragLeave.emit({ event: $event, folder: { pathKey: node.pathKey, label: node.label } })
+					"
+					(drop)="
+						folderDrop.emit({ event: $event, folder: { pathKey: node.pathKey, label: node.label } })
+					">
+					<button
+						type="button"
+						draggable="false"
+						class="flex min-w-0 items-center gap-2.5 rounded-lg text-left transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-violet-500/50"
+						[attr.aria-expanded]="isExpanded(node.pathKey)"
+						(click)="onFolderClick(node.pathKey)">
+						<span
+							class="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-app-raised/90 text-app-muted shadow-sm transition-transform duration-200 group-hover/folder:bg-violet-950/50 group-hover/folder:text-violet-800 dim:group-hover/folder:text-violet-200"
+							[class.rotate-90]="isExpanded(node.pathKey)">
+							<i class="fa-solid fa-chevron-right text-[10px]" aria-hidden="true"></i>
+						</span>
+						<span
+							class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500/30 via-fuchsia-500/15 to-app-surface/80 text-violet-800 dim:text-violet-200 shadow-lg shadow-violet-950/40 ring-1 ring-violet-400/20">
+							<i
+								class="fa-solid text-[1.05rem]"
+								[class.fa-folder-open]="isExpanded(node.pathKey)"
+								[class.fa-folder]="!isExpanded(node.pathKey)"
+								aria-hidden="true"></i>
+						</span>
+						<span
+							class="min-w-0 truncate font-semibold tracking-tight text-app-fg"
+							[innerHTML]="node.label | highlight: filterHighlight()"></span>
+					</button>
+					<span
+						class="hidden text-right text-xs font-medium text-app-muted sm:block"
+						aria-hidden="true"
+						>—</span
+					>
+					<span class="hidden text-right text-xs text-app-muted sm:block" aria-hidden="true">—</span>
+					<span class="hidden text-right text-xs text-app-muted sm:block" aria-hidden="true">—</span>
+					<div class="flex items-center justify-end gap-0.5 pl-14 sm:pl-0">
+						@if (!actionsDisabled()) {
+							<button
+								type="button"
+								draggable="false"
+								class="inline-flex h-8 w-8 items-center justify-center rounded-lg text-app-muted transition-colors hover:bg-app-raised/90 hover:text-violet-800 dim:hover:text-violet-200"
+								title="New subfolder inside this folder"
+								[attr.aria-label]="'New subfolder in ' + node.label"
+								(click)="folderSubfolder.emit(node.pathKey); $event.stopPropagation()">
+								<i class="fa-solid fa-folder-plus text-sm" aria-hidden="true"></i>
+							</button>
+							<button
+								type="button"
+								draggable="false"
+								class="inline-flex h-8 w-8 items-center justify-center rounded-lg text-app-muted transition-colors hover:bg-app-raised/90 hover:text-red-800 dim:hover:text-red-300"
+								title="Delete this folder and everything inside it"
+								[attr.aria-label]="'Delete folder ' + node.label"
+								(click)="folderDelete.emit(node.pathKey); $event.stopPropagation()">
+								<i class="fa-solid fa-trash text-sm" aria-hidden="true"></i>
+							</button>
+						}
+					</div>
+				</div>
+				@if (isExpanded(node.pathKey) && node.children.length) {
+					<div class="relative">
+						<div
+							class="pointer-events-none absolute bottom-1 left-0 top-0 w-px bg-gradient-to-b from-violet-500/35 via-app-border-soft/30 to-transparent"
+							[style.left.rem]="depth() * 1.1 + 1.1"
+							aria-hidden="true"></div>
+						<app-file-tree
+							[nodes]="node.children"
+							[expandedKeys]="expandedKeys()"
+							[depth]="depth() + 1"
+							[actionsDisabled]="actionsDisabled()"
+							[thumbnailFailedIds]="thumbnailFailedIds()"
+							[filterHighlight]="filterHighlight()"
+							[dropTargetPathKey]="dropTargetPathKey()"
+							(folderToggle)="folderToggle.emit($event)"
+							(folderSubfolder)="folderSubfolder.emit($event)"
+							(folderDelete)="folderDelete.emit($event)"
+							(fileDragStart)="fileDragStart.emit($event)"
+							(fileDragEnd)="fileDragEnd.emit($event)"
+							(folderDragStart)="folderDragStart.emit($event)"
+							(folderDragEnd)="folderDragEnd.emit($event)"
+							(folderDragOver)="folderDragOver.emit($event)"
+							(folderDragLeave)="folderDragLeave.emit($event)"
+							(folderDrop)="folderDrop.emit($event)"
+							(fileRename)="fileRename.emit($event)"
+							(fileDelete)="fileDelete.emit($event)"
+							(fileDownload)="fileDownload.emit($event)"
+							(fileThumbnailError)="fileThumbnailError.emit($event)" />
+					</div>
+				}
+			</div>
+		} @else if (node.file.name !== folderPlaceholderName) {
+			<div
+				class="file-row relative z-0 grid grid-cols-1 gap-2 overflow-visible border-b border-app-border/35 py-3 pl-3 pr-4 transition-colors hover:bg-app-raised/20 [&:has(.thumb-preview:hover)]:z-[60] sm:grid-cols-[minmax(0,1fr)_4.5rem_7rem_11rem_auto] sm:items-center sm:gap-4"
+				[ngClass]="actionsDisabled() ? 'cursor-default' : 'cursor-grab active:cursor-grabbing'"
+				[draggable]="!actionsDisabled()"
+				(dragstart)="fileDragStart.emit({ event: $event, file: node.file })"
+				(dragend)="fileDragEnd.emit($event)"
+				[style.padding-left.rem]="depth() * 1.1 + 0.75">
+				<div class="flex min-w-0 items-center gap-2.5 overflow-visible">
+					<span class="inline-flex w-7 shrink-0" aria-hidden="true"></span>
+					<span
+						class="thumb-preview group/thumb relative z-10 inline-flex h-10 w-10 shrink-0 items-center justify-center overflow-visible rounded-lg bg-app-raised/60 ring-1 ring-app-border-soft/80">
+						@let thumbSrc = thumbnailUrlFor(node.file);
+						@if (thumbSrc && !thumbnailFailedIds().has(node.file.id)) {
+							<img
+								[src]="thumbSrc"
+								[attr.data-thumb-file-id]="node.file.id"
+								alt=""
+								loading="lazy"
+								draggable="false"
+								(error)="fileThumbnailError.emit($event)"
+								class="relative z-[1] h-10 w-10 rounded object-cover shadow-sm border border-app-border-soft transition-transform duration-200 ease-out will-change-transform group-hover/thumb:scale-[4] group-hover/thumb:shadow-2xl group-hover/thumb:ring-2 group-hover/thumb:ring-violet-500/35 group-hover/thumb:origin-top-left" />
+						} @else {
+							<i [class]="faFile(node.file.extension)" class="text-lg text-app-subtle"></i>
+						}
+					</span>
+					<div class="min-w-0 flex-1">
+						<span
+							class="block truncate font-medium text-app-fg"
+							[innerHTML]="node.file.name | highlight: filterHighlight()"></span>
+						@if (node.file.relativePath && node.file.relativePath.includes('/')) {
+							<span
+								class="mt-0.5 block truncate font-mono text-[10px] text-app-muted"
+								[innerHTML]="node.file.relativePath | highlight: filterHighlight()"></span>
+						}
+					</div>
+				</div>
+				<span
+					class="hidden truncate text-right font-mono text-xs text-app-muted sm:block"
+					[title]="node.file.extension"
+					[innerHTML]="node.file.extension | highlight: filterHighlight()"></span>
+				<div
+					class="flex flex-wrap items-center gap-x-3 gap-y-1 pl-14 text-xs text-app-muted sm:hidden">
+					<span class="font-mono" [innerHTML]="node.file.extension | highlight: filterHighlight()"></span>
+					<span class="font-mono tabular-nums">{{ formatBytes(node.file.sizeBytes) }}</span>
+					<span class="min-w-0 truncate">{{ formatDate(node.file.dateModified) }}</span>
+				</div>
+				<div class="hidden text-right font-mono text-sm tabular-nums text-app-muted sm:block">
+					{{ formatBytes(node.file.sizeBytes) }}
+				</div>
+				<div class="hidden text-right text-xs text-app-muted sm:block">
+					{{ formatDate(node.file.dateModified) }}
+				</div>
+				@if (!actionsDisabled()) {
+					<div
+						class="flex items-center justify-end gap-0.5 pl-14 sm:pl-0"
+						(click)="$event.stopPropagation()">
+						<button
+							type="button"
+							draggable="false"
+							class="inline-flex h-8 w-8 items-center justify-center rounded-lg text-app-muted transition-colors hover:bg-app-raised/90 hover:text-violet-800 dim:hover:text-violet-200"
+							[attr.aria-label]="'Rename ' + node.file.name"
+							(click)="fileRename.emit(node.file)">
+							<i class="fa-solid fa-pen-to-square text-sm" aria-hidden="true"></i>
+						</button>
+						<button
+							type="button"
+							draggable="false"
+							class="inline-flex h-8 w-8 items-center justify-center rounded-lg text-app-muted transition-colors hover:bg-app-raised/90 hover:text-sky-800 dim:hover:text-sky-200"
+							[attr.aria-label]="'Download ' + node.file.name"
+							(click)="fileDownload.emit(node.file)">
+							<i class="fa-solid fa-download text-sm" aria-hidden="true"></i>
+						</button>
+						<button
+							type="button"
+							draggable="false"
+							class="inline-flex h-8 w-8 items-center justify-center rounded-lg text-app-muted transition-colors hover:bg-app-raised/90 hover:text-red-800 dim:hover:text-red-300"
+							[attr.aria-label]="'Delete ' + node.file.name"
+							(click)="fileDelete.emit(node.file)">
+							<i class="fa-solid fa-trash text-sm" aria-hidden="true"></i>
+						</button>
+					</div>
+				} @else {
+					<div class="hidden sm:block" aria-hidden="true"></div>
+				}
+			</div>
+		}
+	}
+</div>

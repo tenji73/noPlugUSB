@@ -1,0 +1,104 @@
+<header
+	class="sticky top-0 z-50 flex shrink-0 items-center justify-between gap-4 border-b border-app-border bg-app-page/95 px-4 py-3 backdrop-blur-md sm:px-6">
+	<a
+		routerLink="/"
+		class="flex min-w-0 items-center gap-2 rounded-lg outline-none ring-blue-500/60 transition-opacity hover:opacity-90 focus-visible:ring-2">
+		<h1 class="text-2xl tracking-tight text-app-fg">
+			<span class="font-bold">No</span>Plug<span class="font-black">USB</span><sup>&nbsp;0.1.2</sup>
+		</h1>
+	</a>
+	<div class="flex shrink-0 items-center gap-2">
+		<div class="relative" #createMenuRoot>
+			<button
+				type="button"
+				class="btn shrink-0 gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-900/30 hover:bg-blue-500 sm:px-5"
+				(click)="toggleCreateMenu($event)"
+				[attr.aria-expanded]="createMenuOpen()"
+				aria-haspopup="menu">
+				<span class="text-lg leading-none" aria-hidden="true">+</span>
+				<span class="hidden sm:inline">New device</span>
+				<span class="sm:hidden">New</span>
+				<i class="fa-solid fa-chevron-down text-xs opacity-90" aria-hidden="true"></i>
+			</button>
+			@if (createMenuOpen()) {
+				<div
+					class="absolute right-0 top-full z-[60] mt-2 w-[min(calc(100vw-2rem),18rem)] overflow-hidden rounded-xl border border-app-border bg-app-surface shadow-2xl shadow-black/40"
+					role="menu"
+					aria-label="Create new device menu">
+					<button
+						type="button"
+						role="menuitem"
+						class="flex w-full items-center gap-2 px-3 py-2.5 text-left text-sm text-app-fg transition-colors hover:bg-app-raised"
+						(click)="selectCreateNew($event)">
+						<i class="fa-solid fa-circle-plus w-4 shrink-0 opacity-90" aria-hidden="true"></i>
+						<span>Create new</span>
+					</button>
+					<button
+						type="button"
+						role="menuitem"
+						class="flex w-full items-center gap-2 px-3 py-2.5 text-left text-sm text-app-fg transition-colors hover:bg-app-raised"
+						(click)="selectImportExisting($event)">
+						<i class="fa-solid fa-file-import w-4 shrink-0 opacity-90" aria-hidden="true"></i>
+						<span>Import existing</span>
+					</button>
+				</div>
+			}
+			<input
+				type="file"
+				accept=".json,.bin"
+				class="sr-only"
+				#importInput
+				(change)="onImportFilePicked($event)" />
+		</div>
+		<div class="relative" #settingsRoot>
+			<button
+				type="button"
+				class="btn relative shrink-0 rounded-xl border border-app-border bg-app-raised/90 text-app-fg hover:bg-app-raised"
+				aria-label="Settings"
+				title="Settings"
+				[attr.aria-expanded]="settingsOpen()"
+				(click)="toggleSettings($event)">
+				<i class="fa-solid fa-gear" aria-hidden="true"></i>
+			</button>
+			@if (settingsOpen()) {
+				<div
+					class="absolute right-0 top-full z-[60] mt-2 w-[min(calc(100vw-2rem),18rem)] overflow-hidden rounded-xl border border-app-border bg-app-surface shadow-2xl shadow-black/40"
+					role="menu"
+					aria-label="Settings">
+					<div class="border-b border-app-border px-3 py-2">
+						<p class="text-[10px] font-semibold uppercase tracking-wider text-app-muted">Theme</p>
+					</div>
+					<div class="flex flex-col py-1">
+						@for (t of themes; track t.id) {
+							<button
+								type="button"
+								role="menuitemradio"
+								[attr.aria-checked]="themeId() === t.id"
+								class="flex w-full items-center gap-2 px-3 py-2.5 text-left text-sm text-app-fg transition-colors hover:bg-app-raised"
+								(click)="selectTheme(t.id, $event)">
+								<i
+									class="fa-solid fa-check w-4 shrink-0 text-emerald-500"
+									[class.opacity-0]="themeId() !== t.id"
+									aria-hidden="true"></i>
+								<span>{{ t.label }}</span>
+							</button>
+						}
+					</div>
+<!--					<div class="border-t border-app-border p-2">-->
+<!--						<button-->
+<!--							type="button"-->
+<!--							class="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm text-app-muted transition-colors hover:bg-app-raised hover:text-app-fg"-->
+<!--							(click)="purgeCaches($event)">-->
+<!--							<i class="fa-solid fa-broom w-4 shrink-0 text-center opacity-90" aria-hidden="true"></i>-->
+<!--							<span>Purge all caches</span>-->
+<!--						</button>-->
+<!--						<p class="px-3 pb-2 pt-0 text-[10px] leading-snug text-app-muted">-->
+<!--							Deletes generated thumbnails on the server to free disk space. They will re-generate when you-->
+<!--							browse files.-->
+<!--						</p>-->
+<!--					</div>-->
+				</div>
+			}
+		</div>
+	</div>
+</header>

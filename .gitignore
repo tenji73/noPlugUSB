@@ -1,0 +1,19 @@
+fe_sync.sh
+
+# Node
+node_modules/
+npm-debug.log
+
+# NoPlugUSB Data
+data/drives/
+data/uploads/
+data/stats_mount_loop/
+backend/cache/
+backend/drives.json
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Environment Variables
+.env
